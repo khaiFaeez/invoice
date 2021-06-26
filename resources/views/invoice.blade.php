@@ -40,7 +40,8 @@
           </div>
           @endif
           
-          <h3 id="indicators">Client Details</h3>
+          <h5 id="indicators">Client Details</h5>
+
           @if(request()->route('id'))
           <form id="client_form" action="{{url('invoice')}}" method="POST" >
           @endif
@@ -52,7 +53,7 @@
           @endif
             @csrf      
 
-            <input class="form-control form-control-sm" type="text" name="Id" value="{{ old('Id') }} {{request()->route('id')}}" placeholder="" required>   
+            <input class="form-control form-control-sm" type="hidden" name="Id" value="{{ old('Id') }} {{request()->route('id')}}" placeholder="" required>   
             <div class="row">
               <div class="col-lg-5 ">
                 <div class="form-group required">
@@ -79,6 +80,31 @@
                     </div>
                   </div>
                 </div>
+                </br>
+                <div class="row">
+                <div class="col">
+                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Occpation</label>
+                          <select name="Occupation" class="form-control form-control-sm" >
+                          <option  value=''>Please select</option>
+                          <option  value='A'>Gaji Bulanan</option>
+                          <option  value='B'>Bekerja Sendiri/berniaga</option>
+                          <option  value='C'>Suri Rumah</option>
+                          <option  value='D'>Goverment Staff</option>
+                          
+                </select>
+                </div>
+                <div class="col">
+                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Order Status</label>
+                          <select name="Order_Status" class="form-control form-control-sm" >
+                          <option  value=''>Please select</option>
+                          <option  value='NEW'>New Order</option>
+                          <option  value='REPEAT'>Repeat Order</option>
+                          
+                </select>
+                </div>
+                </div>
+
+
                 </br>
                 @if(request()->route('id') == null)
                 <button type="submit" class="btn btn-primary">Save</button>
@@ -115,8 +141,8 @@
                       <select name="State" class="form-control form-control-sm" required>
                         <option  value=''>Please select state</option>
                         @foreach($state as $key => $value)
-									<option value="{{$value->id}}" >{{$value->Negeri}}</option>
-						@endforeach	
+									        <option value="{{$value->id}}" >{{$value->Negeri}}</option>
+						            @endforeach	
                       </select>
                     </div>
                     <div class="col">       
@@ -140,7 +166,7 @@
       </div>
     </div>
   </div>
-  <div class="py-12" style="padding-top: 5px;">
+  <div class="py-12" style="padding-top: 5px;padding-bottom: 5px;">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 bg-white border-b border-gray-200">
@@ -148,7 +174,7 @@
         <div class="row">
                 <div class="row">
                     <div class="col-lg-4 ">
-                            <h3 id="indicators">Invoice Details</h3>
+                            <h5 id="indicators">Invoice Details</h5>
                     </div>
                     <div class="col-lg-4 offset-lg-4">
             <div class="col form-group required">
@@ -178,7 +204,7 @@
         <div class="row">
               <div class="col-lg-12 ">
 
-   <table class="table table-hover">
+   <table class="table">
         <thead>
             <tr>
             <th scope="col">#</th>
@@ -193,21 +219,21 @@
         <tbody>
 
         @for ($i = 1; $i <= 5; $i++)
-        
+       
         <tr>      
-            <td>{{$i}}</td>
-            <td><select style="border: 0;" name="Product_{{$i}}" class="form-control form-control-sm">
+            <td style="padding-bottom: 0px;padding-top: 0px;">{{$i}}</td>
+            <td style="padding-bottom: 0px;padding-top: 0px;"><select style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" name="Product_{{$i}}" class="form-control form-control-sm">
                                 <option  value=''>Product</option>
                                 @foreach($product as $key => $value)
                                             <option value="{{$value->id}}" >{{$value->Product_Name}}</option>
                                 @endforeach	
                             </select>
             </td>
-            <td><input style="border: 0;" class="form-control form-control-sm" type="text" name="U_price_{{$i}}" value="" placeholder="" ></td>
-            <td><input style="border: 0;" class="form-control form-control-sm" type="text" name="Qty_{{$i}}" value="" placeholder="" ></td>
-            <td><input style="border: 0;" class="form-control form-control-sm" type="text" name="Disc_{{$i}}" value="" placeholder="" ></td>
-            <td><input style="border: 0;" class="form-control form-control-sm" type="text" name="DiscRM_{{$i}}" value="" placeholder="" ></td>
-            <td><input style="border: 0;" class="form-control form-control-sm" type="text" name="Total_{{$i}}" value="" placeholder="" ></td>
+            <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" name="U_price_{{$i}}" value="" placeholder="" ></td>
+            <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" name="Qty_{{$i}}" value="" placeholder="" ></td>
+            <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" name="Disc_{{$i}}" value="" placeholder="" ></td>
+            <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" name="DiscRM_{{$i}}" value="" placeholder="" ></td>
+            <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" name="Total_{{$i}}" value="" placeholder="" ></td>
             </tr>
         @endfor
         </tbody>
@@ -220,25 +246,146 @@
 
 
               </div>
-              <!-- <div class="col-lg-3 offset-lg-1">
-              <div class="col form-group required">   
-                        <label class="col-form-label col-form-label-sm" for="inputSmall">Invoice No.</label>                  
-                      <input class="form-control form-control-sm" type="text" name="Phone_1" value="{{ old('Phone_1') }}" placeholder="" required>
-              </div>
-              
-              <div class="col form-group required">
-                      <label class="col-form-label col-form-label-sm" for="inputSmall">Aging</label>
-                      <input class="form-control form-control-sm" type="text" name="Phone_1" value="{{ old('Phone_1') }}" placeholder="" required>
-              </div>
-              <div class="col form-group required">
-                      <label class="col-form-label col-form-label-sm" for="inputSmall">Status</label>
-                      <input class="form-control form-control-sm" type="text" name="Phone_1" value="{{ old('Phone_1') }}" placeholder="" required>
-              </div>
-
-
-              </div> -->
+           
 
         </div><!-- row -->
+
+
+        
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="py-12" style="padding-top: 5px;padding-bottom: 5px;">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="p-6 bg-white border-b border-gray-200">
+
+              <h5 id="indicators">Sales Details</h5>
+
+
+              <div class="form-group required">
+                  <div class="row">
+                        <div class="col-lg-5 ">
+                        <label class="col-form-label col-form-label-sm" for="inputSmall">Sales Person</label>
+                          <select name="Sales_Person" class="form-control form-control-sm" required>
+                            <option  value=''>Please select consultant</option>
+                            @foreach($consultant as $key => $value)
+                              <option value="{{$value->id}}" >{{$value->Name}} - {{$value->Employee_Code}}</option>
+                            @endforeach	
+                          </select>
+                        </div>
+
+
+                        <div class="col-lg-3">
+                          <label class="col-form-label col-form-label-sm" for="inputSmall">Sales Channel</label>
+                          <select name="Channel" class="form-control form-control-sm" required>
+                          <option  value=''>Please select</option>
+                          <option  value='1'>ONLINE</option>
+                          <option  value='2'>DISTRIBUTOR</option>
+                          <option  value='4'>OFFLINE</option>
+                          <option  value='3'>SPECIAL ORDER</option>
+                           
+                          </select>
+                          </div><div class="col-lg-3">  
+                          <label class="col-form-label col-form-label-sm" for="inputSmall">Closing Source</label>
+                          <select name="Closing" class="form-control form-control-sm">
+                            <option  value=''>Please select</option>
+                            <option  value='A'>A - CALL</option>
+                            <option  value='B'>B - WHATSAPP</option>
+                            <option  value='C'>C - WALKIN</option>
+                            <option  value='D'>D - ROADSHOW</option>
+                          </select>
+                        </div>
+
+
+
+                </div>
+            </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="py-12" style="padding-top: 5px;padding-bottom: 5px;">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="p-6 bg-white border-b border-gray-200">
+
+   <div class="row">
+    <div class="col-lg-5 ">
+        <h5 id="indicators">Payment Details</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Promise To Pay (PTP)</th>
+                    <th scope="col">Settlement (RM)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for ($p = 1; $p <= 4; $p++)
+                <tr>
+                    <td style="padding-bottom: 0px;padding-top: 0px;">{{$p}}</td>
+                    <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="date" name="Ptp_{{$p}}" value="{{ old('Ptp_$p') }}" placeholder="" ></td>
+                    <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" name="Settlement_{{$p}}" value="{{ old('Settlement_$p') }}" placeholder="" ></td>
+                </tr>
+                @endfor
+            </tbody>
+            <tfoot>
+                <th ></th>
+                <th >Total Settlement (RM)</th>
+                <th ><input style="border: 0;" class="form-control form-control-sm" type="text" name="total_settlement" value="" placeholder="" ></th>
+            </tfoot>
+        </table>
+    </div>
+
+        
+  <!-- section -->
+
+  <div class="col-lg-5 offset-lg-1">
+   <h5 id="indicators">Account</h5>
+   <div class="col form-group required">
+      <label class="col-form-label col-form-label-sm" for="inputSmall">Full Settlement Date</label>
+      <input class="form-control form-control-sm" type="Date" name="Date_Settlement" value="{{ old('Date_Settlement') }}" placeholder="" >
+   </div>
+   <label class="col-form-label col-form-label-sm" for="inputSmall">Collector</label>
+   <select name="Collector" class="form-control form-control-sm">
+      <option  value=''>Please select collector</option>
+      @foreach($cmd as $key => $value)
+      <option value="{{$value->id}}" >{{$value->Name}} - {{$value->Employee_Code}}</option>
+      @endforeach	
+   </select>
+</div>
+<!-- section -->
+
+
+
+  
+
+  </div>
+  <!-- row -->
+
+
+
+
+
+              </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="py-12" style="padding-top: 5px;padding-bottom: 5px;">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="p-6 bg-white border-b border-gray-200">
 
         @if(request()->route('id'))
                 <button type="submit" class="btn btn-primary">Save Invoice</button>
@@ -247,11 +394,44 @@
                 </button>
             </form>
         @endif
-        
 
+  Id
+Name
+MyKad_SSM
+Phone_1
+Phone_2
+Phone_3
+Occupation
+Order_Status
+Address
+Address_2
+Poscode
+City
+State
+Country
+Date
+PAID  Invoice No:  Aging
 
-        </div>
+Product_{{$i}}
+U_price_{{$i}} Qty_{{$i}} Disc_{{$i}} DiscRM_{{$i}} Total_{{$i}}
+Grand_Total
+
+Sales_Person
+Channel
+Closing
+
+Ptp_{{$p}}
+Settlement_{{$p}}
+
+Date_Settlement
+Collector
+
+</div>
       </div>
     </div>
   </div>
+
+
+
+
 </x-app-layout>
