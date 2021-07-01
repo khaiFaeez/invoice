@@ -1,8 +1,8 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/myxara/public_html/invoice/ 
+    - export DEPLOYPATH=/home/myxara/public_html/invoice
     - /bin/cp -r * $DEPLOYPATH #copy all from root
     #    - /bin/cp -r ./public/* $DEPLOYPATH/public_html/invoice
-    - /bin/cp ./public/js/*.js $DEPLOYPATH/public_html/invoice/js
-    - /bin/cp ./public/css/*.css $DEPLOYPATH/public_html/invoice/css
+    - /bin/cp ./public/js/*.js $DEPLOYPATH
+    - /bin/cp ./public/css/*.css $DEPLOYPATH
