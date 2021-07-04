@@ -21,6 +21,8 @@
         "tailwindcss": "^2.0.2"
     },
     "dependencies": {
-        "bootswatch": "^5.0.2"
+        "bootswatch": "^5.0.2",
+        "font-awesome": "^4.7.0",
+        "jautocalc": "^1.4.1"
     }
 }
