@@ -3,7 +3,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Dashboard') }} {{$client ?? ''}}
         </h2>
 
         <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"> -->
@@ -112,7 +112,7 @@ var table = $('#data-table').DataTable({
     "pageLength": 100,
     ajax: "{{ route('invoice.list') }}",
     columns: [{
-            data: 'Aging',name: 'Aging'
+            data: 'Id',name: 'Id'
         },{
             data: 'Inv_No',name: 'Inv_No'
         },{

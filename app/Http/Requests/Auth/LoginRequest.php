@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use DB;
 
 class LoginRequest extends FormRequest
 {
@@ -29,7 +30,7 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|string|email',
+            'memberID' => 'required|string',
             'password' => 'required|string',
         ];
     }
@@ -44,14 +45,32 @@ class LoginRequest extends FormRequest
     public function authenticate()
     {
         $this->ensureIsNotRateLimited();
+        $success = '';
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // if ( !Auth::attempt($this->only('memberID', 'password'), $this->boolean('remember'))) {
+        //     RateLimiter::hit($this->throttleKey());
+
+        //     throw ValidationException::withMessages([
+        //         'memberID' => __('auth.failed'),
+        //     ]);
+        // }
+
+        $user = DB::table('membership_users')->where('memberID', $this->only('memberID'))->first();
+       
+        if($user)
+        if($user->isApproved == 1)
+           $success = Auth::attempt($this->only('memberID', 'password'), $this->boolean('remember'));
+
+
+
+        if ( !$success ) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'memberID' => __('auth.failed'),
             ]);
         }
+
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -74,7 +93,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'memberID' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -88,6 +107,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey()
     {
-        return Str::lower($this->input('email')).'|'.$this->ip();
+        return Str::lower($this->input('memberID')).'|'.$this->ip();
     }
 }
