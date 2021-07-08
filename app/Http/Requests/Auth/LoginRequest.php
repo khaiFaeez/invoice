@@ -57,7 +57,7 @@ class LoginRequest extends FormRequest
 
         $user = DB::table('membership_users')->where('memberID', $this->only('memberID'))->first();
        
-        if($user)
+        if($user) 
         if($user->isApproved == 1)
            $success = Auth::attempt($this->only('memberID', 'password'), $this->boolean('remember'));
 
