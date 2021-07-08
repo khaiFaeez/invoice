@@ -110,7 +110,13 @@ var table = $('#data-table').DataTable({
     serverSide: true,
     scrollX: true,
     "pageLength": 100,
-    ajax: "{{ route('invoice.list') }}",
+    //ajax: "{{ route('invoice.list') }}",
+    "ajax": {
+            "url": "{{ route('invoice.getlist') }}",
+            "type": "POST",
+            'headers': { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+        },
+        
     columns: [{
             data: 'Id',name: 'Id'
         },{
