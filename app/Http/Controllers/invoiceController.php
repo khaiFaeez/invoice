@@ -42,7 +42,7 @@ class invoiceController extends Controller
         }
 
  
-    return view('invoice_list');
+    //return view('invoice_list');
         
         
     }

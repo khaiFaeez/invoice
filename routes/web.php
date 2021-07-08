@@ -30,7 +30,9 @@ require __DIR__.'/auth.php';
 
 Route::get('/invoice', 'App\Http\Controllers\invoiceController@add_client_form')->middleware(['auth'])->name('invoice');
 
-Route::get('/invoice/list', 'App\Http\Controllers\invoiceController@invoicelist')->middleware(['auth'])->name('invoice.list');
+Route::get('/invoice/list', 'App\Http\Controllers\invoiceController@invoice_list')->middleware(['auth'])->name('invoice.list');
+Route::post('/invoice/getlist', 'App\Http\Controllers\invoiceController@invoicelist')->middleware(['auth'])->name('invoice.getlist');
+
 Route::get('/invoice/list/{id}', 'App\Http\Controllers\invoiceController@add_client_form')->middleware(['auth'])->name('invoice.view');
 
 
