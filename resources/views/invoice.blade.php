@@ -1,5 +1,5 @@
 <x-app-layout>
-  <x-slot name="header">
+  <x-slot name="header" >
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
       {{ __('Dashboard') }} 
     </h2>
@@ -74,6 +74,8 @@
                   <label class="col-form-label col-form-label-sm" for="inputSmall">ID Card</label>
                   <input class="form-control form-control-sm" name="MyKad_SSM" value="{{ old('MyKad_SSM') }} {{$client_MyKad_SSM  ?? ''}}" type="text" placeholder="" required @if(request()->route('id')) readonly @endif>
                 </div>
+</br>   
+@if(request()->route('id') == null)
                 <div class="form-group">
                   <div class="row">
                     <div class="col form-group required">
@@ -91,10 +93,24 @@
                   </div>
                 </div>
                 </br>
-                
+                @endif               
 
                 
                 @if(request()->route('id')) <!-- add invoice -->
+
+
+
+                <div class="form-group required">
+                  <label class="col-form-label col-form-label-sm" for="inputSmall">Ship Name</label>
+                  <input class="form-control form-control-sm" type="text" id="Ship_Name" name="Ship_Name" value="{{ old('Ship_Name') }}  {{$client_Name ?? ''}}" placeholder="" required>
+                </div>
+
+                <div class="form-group required">
+                  <label class="col-form-label col-form-label-sm" for="inputSmall">Ship Phone No.</label>
+                  <input class="form-control form-control-sm" type="text" id="Ship_Phone" name="Ship_Phone" value="{{ old('Ship_Phone') }}  {{$client->Mobile_No ?? ''}} / {{$client->Phone ?? ''}} / {{$client->Off_Phone ?? ''}}" placeholder="" required>
+                </div>
+
+
                 <div class="row">
                 <div class="col">
                 <label class="col-form-label col-form-label-sm" for="inputSmall">Client Occpation</label>
@@ -141,36 +157,33 @@
 
                 <h5 id="indicators">Postage Details</h5> 
                  
-                    <button type="button" class="btn btn-info btn-sm">Copy Ship Address</button>
+                    <button onclick="copy_address({{request()->route('id')}});" type="button" class="btn btn-info btn-sm">Copy Client Address</button>
                     
-                    <button type="button" class="btn btn-danger btn-sm">Clear Ship Address</button>
+                    <button onclick="clear_address()" type="button" class="btn btn-danger btn-sm">Clear Address</button>
 
                     </div>
                     </div>
                
 
-              <div class="form-group required">
-                  <label class="col-form-label col-form-label-sm" for="inputSmall">Ship Name</label>
-                  <input class="form-control form-control-sm" type="text" name="Ship_Name" value="{{ old('Ship_Name') }}  {{$client_Name ?? ''}}" placeholder="" required>
-                </div>
+              
                 @endif
                 <div class="form-group required">
                   <label class="col-form-label col-form-label-sm" for="inputSmall">Address</label>
-                  <input class="form-control form-control-sm" type="text" placeholder="" name="Address" value="{{ old('Address') }} {{$client->Address ?? ''}}" required>
+                  <input class="form-control form-control-sm" type="text" placeholder="" id="Address" name="Address" value="{{ old('Address') }} {{$client->Address ?? ''}}" required>
                 </div>
                 <div class="form-group">
                   <label class="col-form-label col-form-label-sm" for="inputSmall">Address 2</label>
-                  <input class="form-control form-control-sm" type="text" placeholder=""  name="Address_2" value="{{ old('Address_2') }} {{$client->Address_2 ?? ''}}">
+                  <input class="form-control form-control-sm" type="text" placeholder=""  id="Address_2" name="Address_2" value="{{ old('Address_2') }} {{$client->Address_2 ?? ''}}">
                 </div>
                 <div class="form-group required">
                   <div class="row">
                     <div class="col">
                       <label class="col-form-label col-form-label-sm" for="inputSmall">Poscode</label>
-                      <input class="form-control form-control-sm" type="text" placeholder="" name="Poscode" value="{{ old('Poscode') }} {{$client->Poscode ?? ''}}" required>
+                      <input class="form-control form-control-sm" type="text" placeholder="" id="Poscode" name="Poscode" value="{{ old('Poscode') }} {{$client->Poscode ?? ''}}" required>
                     </div>
                     <div class="col">       
                       <label class="col-form-label col-form-label-sm" for="inputSmall">City</label>
-                      <input class="form-control form-control-sm" type="text" placeholder="" name="City" value="{{ old('City') }} {{$client->City ?? ''}}" required>
+                      <input class="form-control form-control-sm" type="text" placeholder="" id="City" name="City" value="{{ old('City') }} {{$client->City ?? ''}}" required>
                     </div>
                   </div>
                 </div>
@@ -276,10 +289,16 @@
 
   <div class="row">
                 <div class="col">
-       
-        <button onclick="product('PLATINUM LADYXARA WHITE JUICE',350000,3,0,800000,   'PLATINUM LADYXARA WHITE JUICE',0,1,0,0,   'POSLAJU',0,0,0,0)" type="button" class="btn btn-outline-primary btn-sm ">3 PLWJ</button>
+                <p style="margin-top: -12px;margin-bottom: 2px;">Quick Template:</p>
+                <button onclick="clear_products();" type="button" class="btn btn-outline-danger btn-sm" style="margin-left: 10px;">Reset</button><?php echo $product_template ?>
         </div></div>
 
+
+       
+           
+
+             
+       
      
 
 
@@ -575,10 +594,13 @@ $( document ).ready(function() {
       document.getElementById('Total_'+id).value = '';
       
     }
-    function product(produk,harga,quantity, dicsount, total, produk2,harga2,quantity2, dicsount2, total2 , produk3,harga3,quantity3, dicsount3, total3){
+    function product(produk,harga,quantity, dicsount, total, produk2,harga2,quantity2, dicsount2, total2 , produk3,harga3,quantity3, dicsount3, total3)
+    {
+      clear_products();
 
 
-      
+if(produk != null)
+{      
 
 var dd = document.getElementById('Product_1');
 for (var i = 0; i < dd.options.length; i++) {
@@ -593,7 +615,12 @@ for (var i = 0; i < dd.options.length; i++) {
     document.getElementById("Qty_1").value = quantity;
     document.getElementById("DiscRM_1").value = dicsount;
     document.getElementById("Total_1").value = total;
-    
+
+}
+
+if(produk2 != null)
+{ 
+
     var dd = document.getElementById('Product_2');
 for (var i = 0; i < dd.options.length; i++) {
     if (dd.options[i].text === produk2) {
@@ -606,7 +633,12 @@ for (var i = 0; i < dd.options.length; i++) {
     document.getElementById("Qty_2").value = quantity2;
     document.getElementById("DiscRM_2").value = dicsount2;
     document.getElementById("Total_2").value = total2;
-    
+
+  }
+
+if(produk3 != null)
+{ 
+
     var dd = document.getElementById('Product_3');
 for (var i = 0; i < dd.options.length; i++) {
     if (dd.options[i].text === produk3) {
@@ -618,7 +650,62 @@ for (var i = 0; i < dd.options.length; i++) {
     document.getElementById("Qty_3").value = quantity3;
     document.getElementById("DiscRM_3").value = dicsount3;
     document.getElementById("Total_3").value = total3;
-    
+
+}   
        
+   }
+   function copy_address(id_client)
+   {
+    
+    $.ajax({
+    type:'get',
+    url:'/getShipAddress',
+    data:{
+        id:id_client
+    },
+    success:function(res){
+      //console.log(res);
+      document.getElementById("Ship_Name").value = res['Name'];
+      document.getElementById("Address").value = res['Address'];
+      document.getElementById("Address_2").value = res['Address_2'];
+      document.getElementById("Poscode").value = res['Poscode'];
+      document.getElementById("City").value = res['City'];
+      document.getElementById("State").value = res['State'];
+      document.getElementById("Country").value = res['Country'];
+      document.getElementById("Ship_Phone").value = res['Mobile_No']+' / '+res['Phone']+' / '+res['Off_Phone'];
+
+      
+
+    }
+
+});
+
+   }
+   function clear_address()
+   {
+      document.getElementById("Ship_Name").value = '';
+      document.getElementById("Address").value = '';
+      document.getElementById("Address_2").value = '';
+      document.getElementById("Poscode").value = '';
+      document.getElementById("City").value = '';
+      document.getElementById("State").value = '';
+      document.getElementById("Ship_Phone").value = '';
+      
+
+   }
+   function clear_products()
+   {
+
+    for(var i =1;i < 6;i++) 
+    { 
+
+    document.getElementById("Product_"+i).value = '';
+    document.getElementById("U_price_"+i).value = '';
+    document.getElementById("Qty_"+i).value = '';
+    document.getElementById("DiscRM_"+i).value = '';
+    document.getElementById("Total_"+i).value = '';
+
+    }
+
    }
 </script>

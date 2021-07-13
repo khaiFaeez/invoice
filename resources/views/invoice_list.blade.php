@@ -38,13 +38,15 @@ td { font-size: 12px; }
                 <table class="table table-bordered table-striped" id="data-table">
             <thead>
                 <tr>
-                    <th>Aging</th>
+                <th>Id</th>
+                <th>Status</th>
+                <th>Aging</th>
                     <th>Inv No</th>
                     <th>Date</th>
                     <th>ID Card</th>
                     <th>Name</th>
                     <th>Ship Phone</th>
-                    <th>Ship Name</th>
+                   <th>Ship Name</th>
                     <th>Ship Address 1</th>
                     <th>Ship Address 2</th>
                     <th>Ship Poscode</th>
@@ -89,7 +91,7 @@ td { font-size: 12px; }
                     <th>PTP 4</th>
                     
                     <th>Created By</th>
-                    <th>Created Date</th>
+                    <th>Created Date</th> 
 
 
 
@@ -109,7 +111,8 @@ var table = $('#data-table').DataTable({
     processing: true,
     serverSide: true,
     scrollX: true,
-    "pageLength": 100,
+    "pageLength": 10,
+    "order": [[ 0, "desc" ]],
     //ajax: "{{ route('invoice.list') }}",
     "ajax": {
             "url": "{{ route('invoice.getlist') }}",
@@ -118,119 +121,141 @@ var table = $('#data-table').DataTable({
         },
         
     columns: [{
-            data: 'Id',name: 'Id'
+               visible:false,data: 'Id',name: 'invoice.Id',"searchable": false
+        },
+        {name:'invoice.Status_Inv', data: null, "render": 
+					function(data, type, full, meta){
+					    
+					    if(data.Status_Inv == 'PENDING')
+						{  
+						        var status = '<button type="button" class="btn btn-danger btn-sm">PENDING</button>';
+						   
+						    
+						}
+						else if(data.Status_Inv == 'PAID')
+						{       var status = '<button type="button" class="btn btn-success btn-sm">PAID</button>';
+						    
+						}
+						
+						return status;}
+			},
+            {
+            data: 'Aging',name: 'invoice.Aging',"searchable": false
         },{
-            data: 'Inv_No',name: 'Inv_No'
+            data: 'Inv_No',name: 'invoice.Inv_No'
         },{
-            data: 'Date',name: 'Date'
+            data: 'Date',name: 'invoice.Date',"searchable": false
+        },
+        {
+            data: 'MyKad_SSM',name: 'client.MyKad_SSM',"searchable": false
         },{
-            data: 'MyKad_SSM',name: 'MyKad_SSM'
+            data: 'Name',name: 'client.Name'
         },{
-            data: 'Name',name: 'Name'
+            data: 'Ship_Phone',name: 'invoice.Ship_Phone',"searchable": false
         },{
-            data: 'Ship_Phone',name: 'Ship_Phone'
+            data: 'Ship_Name',name: 'invoice.Ship_Name'
+        },
+        {
+            data: 'Ship_Add1',name: 'invoice.Ship_Add1'
+        }
+        ,{
+            data: 'Ship_Add2',name: 'invoice.Ship_Add2'
         },{
-            data: 'Ship_Name',name: 'Ship_Name'
+            data: 'Ship_poscode',name: 'invoice.Ship_poscode'
         },{
-            data: 'Ship_Add1',name: 'Ship_Add1'
+            data: 'Ship_City',name: 'invoice.Ship_City'
         },{
-            data: 'Ship_Add2',name: 'Ship_Add2'
+            data: 'Ship_State',name: 'invoice.Ship_State'
         },{
-            data: 'Ship_poscode',name: 'Ship_poscode'
-        },{
-            data: 'Ship_City',name: 'Ship_City'
-        },{
-            data: 'Ship_State',name: 'Ship_State'
-        },{
-            data: 'Ship_Country',name: 'Ship_Country'
+            data: 'Ship_Country',name: 'invoice.Ship_Country'
         },
 
         {
-            data: 'Product',name: 'Product'
+            data: 'P1',name: 'p1.Product_Name'
         },{
-            data: 'Price',name: 'Price'
+            data: 'Price',name: 'invoice.Price',"searchable": false
         },{
-            data: 'Qty',name: 'Qty'
+            data: 'Qty',name: 'invoice.Qty',"searchable": false
         },{
-            data: 'Total_RM',name: 'Total_RM'
+            data: 'Total_RM',name: 'invoice.Total_RM'
         },
 
         {
-            data: 'Product_2',name: 'Product_2'
+            data: 'P2',name: 'p2.Product_Name'
         },{
-            data: 'Price_2',name: 'Price_2'
+            data: 'Price_2',name: 'invoice.Price_2',"searchable": false
         },{
-            data: 'Qty_2',name: 'Qty_2'
+            data: 'Qty_2',name: 'invoice.Qty_2',"searchable": false
         },{
-            data: 'Total_RM_2',name: 'Total_RM_2'
+            data: 'Total_RM_2',name: 'invoice.Total_RM_2'
         },
 
         {
-            data: 'Product_3',name: 'Product_3'
+            data: 'Product_3',name: 'invoice.Product_3'
         },{
-            data: 'Price_3',name: 'Price_3'
+            data: 'Price_3',name: 'invoice.Price_3',"searchable": false
         },{
-            data: 'Qty_3',name: 'Qty_3'
+            data: 'Qty_3',name: 'invoice.Qty_3',"searchable": false
         },{
-            data: 'Total_RM_3',name: 'Total_RM_3'
+            data: 'Total_RM_3',name: 'invoice.Total_RM_3'
         },
 
         {
-            data: 'Product_4',name: 'Product_4'
+            data: 'Product_4',name: 'invoice.Product_4'
         },{
-            data: 'Price_4',name: 'Price_4'
+            data: 'Price_4',name: 'invoice.Price_4',"searchable": false
         },{
-            data: 'Qty_4',name: 'Qty_4'
+            data: 'Qty_4',name: 'invoice.Qty_4',"searchable": false
         },{
-            data: 'Total_RM_4',name: 'Total_RM_4'
+            data: 'Total_RM_4',name: 'invoice.Total_RM_4'
         },
 
         {
-            data: 'Product_5',name: 'Product_5'
+            data: 'Product_5',name: 'invoice.Product_5'
         },{
-            data: 'Price_5',name: 'Price_5'
+            data: 'Price_5',name: 'invoice.Price_5',"searchable": false
         },{
-            data: 'Qty_5',name: 'Qty_5'
+            data: 'Qty_5',name: 'invoice.Qty_5',"searchable": false
         },{
-            data: 'Total_RM_5',name: 'Total_RM_5'
+            data: 'Total_RM_5',name: 'invoice.Total_RM_5'
         },
 
         {
-            data: 'Grand_Total',name: 'Grand_Total'
+            data: 'Grand_Total',name: 'invoice.Grand_Total'
         },
         {
-            data: 'Paid_Total',name: 'Paid_Total'
+            data: 'Paid_Total',name: 'invoice.Paid_Total'
         },
         {
-            data: 'Overdue_Amt',name: 'Overdue_Amt'
+            data: 'Overdue_Amt',name: 'invoice.Overdue_Amt'
         },
         {
-            data: 'Consultant',name: 'Consultant'
+            data: 'Consultant',name: 'invoice.Consultant'
         },
         {
-            data: 'Channel',name: 'Channel'
-        },
-
-        {
-            data: 'Promise_pay',name: 'Promise_pay'
-        },
-        {
-            data: 'Promise_pay2',name: 'Promise_pay2'
-        },
-        {
-            data: 'Promise_pay3',name: 'Promise_pay3'
-        },
-        {
-            data: 'Promise_pay4',name: 'Promise_pay4'
-        },
-
-
-        {
-            data: 'Created_By',name: 'Created_By'
+            data: 'Channel',name: 'invoice.Channel'
         },
 
         {
-            data: 'Created_Date',name: 'Created_Date'
+            data: 'Promise_pay',name: 'invoice.Promise_pay',"searchable": false
+        },
+        {
+            data: 'Promise_pay2',name: 'invoice.Promise_pay2',"searchable": false
+        },
+        {
+            data: 'Promise_pay3',name: 'invoice.Promise_pay3',"searchable": false
+        },
+        {
+            data: 'Promise_pay4',name: 'invoice.Promise_pay4',"searchable": false
+        },
+
+
+        {
+            data: 'Created_By',name: 'invoice.Created_By'
+        },
+
+        {
+            data: 'Created_Date',name: 'invoice.Created_Date'
         },
 
 
