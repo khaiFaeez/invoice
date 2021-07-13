@@ -25,10 +25,21 @@ class invoiceController extends Controller
     {
         //
     }
+    //for copy address function
+    public function getAddress(Request $request)
+    {
+        $client = DB::table('client')->where('id',$request->id)->first();
+        return response()->json($client);
+
+    }
     public function invoicelist(Request $request)
     {
         if ($request->ajax()) {
-            $data = Invoice::select('*');
+            //$data = Invoice::select('*');
+
+            $data = Invoice::join('client', 'invoice.Name', '=', 'client.id')->join('product AS p1', 'p1.id', '=','invoice.product')
+            ->join('product AS p2', 'p2.id', '=','invoice.product_2')
+            ->select(['invoice.*', 'client.Name','client.MyKad_SSM', 'p1.Product_Name AS P1', 'p2.Product_Name AS P2' ]);
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
@@ -76,13 +87,39 @@ class invoiceController extends Controller
     // initial form to create invoice
     public function add_invoice_form($id_client)
     {
-        $id='';
+        $id='';$button = '';
         $state = DB::table('negeri')->get();
         $product = DB::table('product')->get();
         $consultant = DB::table('consultant')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
         $cmd = DB::table('cmd')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
         $country = getCountry(); 
         $client = DB::table('client')->where('id',$id_client)->first();
+        $product_template = DB::table('template_products')->get();
+
+
+        for($i =0;$i < sizeof($product_template);$i++)
+        {
+
+        $text ='';$button_text = '';
+        
+        $template_code[$i] =  $product_template[$i]->Template_Code;
+        $Product_Id[$i] =  explode (",", $product_template[$i]->Product_Id);
+        $U_Price[$i] =  explode (",", $product_template[$i]->U_Price);
+        $Qty[$i] =  explode (",", $product_template[$i]->Qty);
+        $Disc[$i] =  explode (",", $product_template[$i]->Disc);
+        $Total[$i] =  explode (",", $product_template[$i]->Total_Price);
+      
+        for($b =0;$b < sizeof($Product_Id[$i]);$b++)
+        {  
+            $product2 = DB::table('product')->select('Product_Name')->where('id',$Product_Id[$i][$b])->first();
+
+            $text .=  '`'.$product2->Product_Name.'`,'.$U_Price[$i][$b].','.$Qty[$i][$b].','.$Disc[$i][$b].','.$Total[$i][$b].',';
+        }
+
+        $button .= '<button onclick="product('.rtrim($text, ',').')" type="button" class="btn btn-outline-primary btn-sm" style="margin-left: 10px;">'.$template_code[$i].'</button>';       
+
+        }
+         
         
 
         return view('invoice')->with( [ 
@@ -93,6 +130,7 @@ class invoiceController extends Controller
             'client_Mobile_No' => $client->Mobile_No, 'client_Phone' => $client->Phone, 'client_Off_Phone' => $client->Off_Phone,
             'created_by' => $client->Created_By,'created_date' => $client->Created_Date,
             'edited_by' => $client->Edited_By,'edited_date' => $client->Last_Edited_On,
+            'product_template' => $button,
             ] );
 
     }
