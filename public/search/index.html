@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<link rel="icon" href="favicon.ico" sizes="16x16">
+<META NAME="ROBOTS" CONTENT="NOINDEX, FOLLOW">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MYXARA SEARCH</title>
+<link href="search/asset/css/materialize/css/materialize.min.css" rel="stylesheet" media="screen"> 
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+ /* label color */
+   .input-field label {
+     color: #000;
+   }
+   /* label focus color */
+   .input-field input[type=text]:focus + label {
+     color: #000;
+   }
+   /* label underline focus color */
+   .input-field input[type=text]:focus {
+     border-bottom: 1px solid #000;
+     box-shadow: 0 1px 0 0 #000;
+   }
+   /* valid color */
+   .input-field input[type=text].valid {
+     border-bottom: 1px solid #000;
+     box-shadow: 0 1px 0 0 #000;
+   }
+   /* invalid color */
+   .input-field input[type=text].invalid {
+     border-bottom: 1px solid #000;
+     box-shadow: 0 1px 0 0 #000;
+   }
+   /* icon prefix focus color */
+   .input-field .prefix.active {
+     color: #000;
+   }
+</style>
+</head>
+
+
+<body ng-app="clerkApp" ng-controller="SearchCtrl" class=" indigo lighten-5">
+    </br>
+<div class="container ">
+    
+    
+    
+    
+    
+    
+  <div class="row center">
+  
+    <img src="search/MyxaraSearch.png" height="150px" >
+    <form name="searchForm" class="well form-search col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <input name="test" type="text" class="validate" ng-model="keywords" >
+<label for="first_name">Search IC / Mobile Number</label></br>
+ <button type="submit" class="indigo lighten-4 z-depth-3 btn waves-effect waves-light" ng-click="search(searchForm.$valid)"><span class="grey-text text-darken-2">Myxara Search</span></button>
+  <button type="submit" class="indigo lighten-4 z-depth-3 btn waves-effect waves-light"  onClick="window.location.reload()"><span class="grey-text text-darken-2">Clear</span></button>
+        </div>
+      </div>
+    </form>	
+</div>
+</div>
+
+
+  
+    <div class="container" >
+  <!--#hide when result apprear-->
+<div ng-hide="result.length>0">
+<h3 class="center grey-text pulse">{{ keywords }}</h3>
+</div>
+
+	<table class="highlight bordered centered responsive-table">
+		<thead>
+        <tr ng-if="result.length>0">
+          <th>Date</th>
+          <th>Invoice</th>
+          <th>Total</th> 
+          <th>Overdue</th>
+          <th>Status</th>
+          <th>IC No.</th>
+          <th>Name</th>
+          <th>Detail</th>
+          <th></th>              
+        </tr>
+		</thead>
+		<tbody>
+		  <tr ng-repeat="x in result">
+			<td>{{ x.Date }}</td>
+			<td>{{ x.Invoice }}</td>
+			<td>{{ x.Total | currency : "RM" }}</td>		
+			<td>{{ x.Overdue | currency : "RM"}}</td>
+			<td ng-if="x.Status==='PAID'" ><span class="chip lighten-5 green green-text">{{ x.Status }}</span></td>
+		    <td ng-if="x.Status==='PENDING'" ><span class="chip lighten-5 orange orange-text">{{ x.Status }}</span></td>
+			<td>{{ x.IC }}</td>
+			<td>{{ x.Name }}</td>	
+			<td><a href="{{ x.ClientDetail }}" target="_blank"><button type="button" class="btn btn-info">{{ x.Link }}</button></a></td>
+      <td><a href="{{ x.inv }}" target="_blank"><button type="button" class="btn btn-success">Create Invoice</button></a></td>		
+		  </tr>
+		</tbody>
+		</table>
+<h2 class="center red-text" ng-if="result.length===0"> Invoice cannot be found! </h2>
+</div>
+
+   <script src="search/asset/js/jquery-3.1.1.min.js"></script>
+   <script src="search/asset/css/materialize/js/materialize.min.js"></script>
+   <script src="search/asset/js/angular.min.js"></script>
+   	<script src="search/script/search.js"></script>
+   
+   </body>
+   </html>
