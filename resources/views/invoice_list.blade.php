@@ -230,11 +230,24 @@ var table = $('#data-table').DataTable({
             data: 'Overdue_Amt',name: 'invoice.Overdue_Amt'
         },
         {
-            data: 'Consultant',name: 'invoice.Consultant'
+            data: 'Cname',name: 'c.Name'
         },
-        {
-            data: 'Channel',name: 'invoice.Channel'
-        },
+        // {
+        //     data: 'Channel',name: 'invoice.Channel'
+        // },
+        {name:'invoice.Channel', data: null, "render": 
+					function(data, type, full, meta){
+					    
+					    if(data.Channel == 1)
+                            var channel = 'ONLINE';
+                            else if(data.Channel == 2)
+					        var channel = 'DISTRIBUTOR';
+                            else if(data.Channel == 3)
+					        var channel = 'SPECIAL ORDER';
+                            else if(data.Channel == 4)
+					        var channel = 'OFFLINE';
+						return channel;}
+			},
 
         {
             data: 'Promise_pay',name: 'invoice.Promise_pay',"searchable": false
