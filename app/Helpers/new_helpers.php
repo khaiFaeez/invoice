@@ -25,6 +25,43 @@ function getCountry()
           
     return $country;
 }
+function returnNull($amount)
+{
+    if($amount > 0)
+      return $amount;
+    else
+      return '';
+
+}
+function returnTemplate()
+{
+    $button = '';
+    $product_template = DB::table('template_products')->get();
+    for($i =0;$i < sizeof($product_template);$i++)
+    {
+
+    $text ='';
+    
+    $template_code[$i] =  $product_template[$i]->Template_Code;
+    $Product_Id[$i] =  explode (",", $product_template[$i]->Product_Id);
+    $U_Price[$i] =  explode (",", $product_template[$i]->U_Price);
+    $Qty[$i] =  explode (",", $product_template[$i]->Qty);
+    $Disc[$i] =  explode (",", $product_template[$i]->Disc);
+    $Total[$i] =  explode (",", $product_template[$i]->Total_Price);
+  
+    for($b =0;$b < sizeof($Product_Id[$i]);$b++)
+    {  
+        $product2 = DB::table('product')->select('Product_Name')->where('id',$Product_Id[$i][$b])->first();
+
+        $text .=  '`'.$product2->Product_Name.'`,'.$U_Price[$i][$b].','.$Qty[$i][$b].','.$Disc[$i][$b].','.$Total[$i][$b].',';
+    }
+
+    $button .= '<button onclick="product('.rtrim($text, ',').')" type="button" class="btn btn-outline-primary btn-sm" style="margin-left: 10px;">'.$template_code[$i].'</button>';       
+
+    }
+    return $button;
+
+}
 
 
 ?>

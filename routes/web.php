@@ -34,7 +34,7 @@ Route::get('/getShipAddress', 'App\Http\Controllers\invoiceController@getAddress
 Route::get('/invoice/list', 'App\Http\Controllers\invoiceController@invoice_list')->middleware(['auth'])->name('invoice.list');
 Route::post('/invoice/getlist', 'App\Http\Controllers\invoiceController@invoicelist')->middleware(['auth'])->name('invoice.getlist');
 
-Route::get('/invoice/list/{id}', 'App\Http\Controllers\invoiceController@add_client_form')->middleware(['auth'])->name('invoice.view');
+Route::get('/invoice/list/{inv}', 'App\Http\Controllers\invoiceController@invoice_view_form')->middleware(['auth'])->name('invoice.view');
 
 
 Route::get('/invoice/{id}', 'App\Http\Controllers\invoiceController@add_invoice_form')->middleware(['auth'])->name('invoice_id');

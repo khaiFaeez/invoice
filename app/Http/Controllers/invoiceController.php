@@ -38,8 +38,8 @@ class invoiceController extends Controller
             //$data = Invoice::select('*');
 
             $data = Invoice::join('client', 'invoice.Name', '=', 'client.id')->join('product AS p1', 'p1.id', '=','invoice.product')
-            ->join('product AS p2', 'p2.id', '=','invoice.product_2')
-            ->select(['invoice.*', 'client.Name','client.MyKad_SSM', 'p1.Product_Name AS P1', 'p2.Product_Name AS P2' ]);
+            ->join('product AS p2', 'p2.id', '=','invoice.product_2')->join('consultant AS c', 'c.id', '=','invoice.Consultant')
+            ->select(['invoice.*', 'client.Name','client.MyKad_SSM', 'p1.Product_Name AS P1', 'p2.Product_Name AS P2','c.Name as Cname' ]);
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
@@ -66,13 +66,13 @@ class invoiceController extends Controller
     // initial form to create client
     public function add_client_form()
     {
-        $id='';
+        $id='';$button = '';
         $state = DB::table('negeri')->get();
         $product = DB::table('product')->get();
         $consultant = DB::table('consultant')->get();
         $cmd = DB::table('cmd')->get();
         $country = getCountry();
-        
+        $button = returnTemplate();
         
 
         return view('invoice')->with( [ 
@@ -80,7 +80,36 @@ class invoiceController extends Controller
             'state' => $state,'country' => $country,
             'product' => $product, 'id'=>$id, 'client' => '',
             'client_Name' =>  '', 'client_MyKad_SSM' => '',
-            'client_Mobile_No' => '', 'client_Phone' => '', 'client_Off_Phone' => ''
+            'client_Mobile_No' => '', 'client_Phone' => '', 'client_Off_Phone' => '',
+            'product_template' => $button,
+            ] );
+
+    }
+    // to view invoice & edit invoice
+    public function invoice_view_form($id_invoice)
+    {
+        $invoice = DB::table('invoice')->where('id',$id_invoice)->select('*')->first();
+
+        $id='';$button = '';
+        $state = DB::table('negeri')->get();
+        $product = DB::table('product')->get();
+        $consultant = DB::table('consultant')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
+        $cmd = DB::table('cmd')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
+        $country = getCountry(); 
+        $client = DB::table('client')->where('id',$invoice->Name)->first();
+        
+        $button = returnTemplate();
+
+
+        return view('invoice')->with( [ 
+            'cmd' => $cmd,'consultant' => $consultant, 
+            'state' => $state,'country' => $country,
+            'product' => $product, 'id'=>$id, 'client' => $client,
+            'client_Name' =>  $client->Name, 'client_MyKad_SSM' => $client->MyKad_SSM,
+            'client_Mobile_No' => $client->Mobile_No, 'client_Phone' => $client->Phone, 'client_Off_Phone' => $client->Off_Phone,
+            'created_by' => $client->Created_By,'created_date' => $client->Created_Date,
+            'edited_by' => $client->Edited_By,'edited_date' => $client->Last_Edited_On,
+            'product_template' => $button,'invoice' => $invoice
             ] );
 
     }
@@ -100,7 +129,7 @@ class invoiceController extends Controller
         for($i =0;$i < sizeof($product_template);$i++)
         {
 
-        $text ='';$button_text = '';
+        $text ='';
         
         $template_code[$i] =  $product_template[$i]->Template_Code;
         $Product_Id[$i] =  explode (",", $product_template[$i]->Product_Id);

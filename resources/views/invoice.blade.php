@@ -9,6 +9,10 @@
    <form id="cart"  action="{{url('invoice')}}" method="POST" >
   @endif
 
+  @if(request()->route('inv'))
+   <form id="cart"  action="{{url('update.invoice')}}" method="POST" >
+  @endif
+
 
   <div class="py-12" style="padding-bottom: 5px;">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" >
@@ -47,7 +51,7 @@
           </div>
           @endif
           
-          <h5 id="indicators">Client Details</h5>
+          <h5 id="indicators">Client Details </h5>
 
         
 
@@ -63,19 +67,19 @@
             @csrf      
            
          
-            <input class="form-control form-control-sm" type="hidden" name="Id" value="{{ old('Id') }} {{request()->route('id')}}" placeholder="" >   
+            <input class="form-control form-control-sm" type="hidden" name="Id" value="{{ old('Id') }} {{request()->route('id')}} {{request()->route('inv')}}" placeholder="" >   
             <div class="row">
               <div class="col-lg-5 ">
                 <div class="form-group required">
                   <label class="col-form-label col-form-label-sm" for="inputSmall">Name</label>
-                  <input class="form-control form-control-sm" type="text" name="Name" value="{{ old('Name') }}  {{$client_Name ?? ''}}" placeholder="" required @if(request()->route('id')) readonly @endif>
+                  <input class="form-control form-control-sm" type="text" name="Name" value="{{ old('Name') }}  {{$client_Name ?? ''}}" placeholder="" required @if(request()->route('id') || request()->route('inv')) readonly @endif>
                 </div>
                 <div class="form-group required">
                   <label class="col-form-label col-form-label-sm" for="inputSmall">ID Card</label>
-                  <input class="form-control form-control-sm" name="MyKad_SSM" value="{{ old('MyKad_SSM') }} {{$client_MyKad_SSM  ?? ''}}" type="text" placeholder="" required @if(request()->route('id')) readonly @endif>
+                  <input class="form-control form-control-sm" name="MyKad_SSM" value="{{ old('MyKad_SSM') }} {{$client_MyKad_SSM  ?? ''}}" type="text" placeholder="" required @if(request()->route('id') || request()->route('inv')) readonly @endif>
                 </div>
 </br>   
-@if(request()->route('id') == null)
+@if(request()->route('id') == null && request()->route('inv') == null)
                 <div class="form-group">
                   <div class="row">
                     <div class="col form-group required">
@@ -96,7 +100,7 @@
                 @endif               
 
                 
-                @if(request()->route('id')) <!-- add invoice -->
+                @if(request()->route('id') || request()->route('inv')) <!-- add invoice -->
 
 
 
@@ -113,8 +117,8 @@
 
                 <div class="row">
                 <div class="col">
-                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Occpation</label>
-                          <select name="Occupation" class="form-control form-control-sm" >
+                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Occpation {{$invoice->occupation_code ?? ''}}</label>
+                          <select id="Occupation" name="Occupation" class="form-control form-control-sm" >
                           <option  value=''>Please select</option>
                           <option  value='A'>Gaji Bulanan</option>
                           <option  value='B'>Bekerja Sendiri/berniaga</option>
@@ -124,8 +128,8 @@
                 </select>
                 </div>
                 <div class="col">
-                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Order Status</label>
-                          <select name="Order_Status" class="form-control form-control-sm" >
+                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Order Status {{$invoice->Orderstatus ?? ''}}</label>
+                          <select id="Order_Status" name="Order_Status" class="form-control form-control-sm" >
                           <option  value=''>Please select</option>
                           <option  value='NEW'>New Order</option>
                           <option  value='REPEAT'>Repeat Order</option>
@@ -149,7 +153,7 @@
               
               <div class="col-lg-5 offset-lg-1">
 
-              @if(request()->route('id'))
+              @if(request()->route('id') || request()->route('inv'))
                 
                 
                 <div class="row">
@@ -222,9 +226,9 @@
           
           
           </div>
-          </br>
+          
 
-          @if(request()->route('id'))
+          @if(request()->route('id') || request()->route('inv'))
           <div class="row">
           <div class="col-lg-5">
           <p style="color: grey;font-style: italic;margin-bottom:1;padding-left:20px;">Created By: {{$created_by ?? '-'}} on {{$created_date ?? '-'}}</p>
@@ -240,7 +244,7 @@
    
          
 
- @if(request()->route('id'))
+ @if(request()->route('id') || request()->route('inv'))
  <!-- adding invoice -->
   <div class="py-12" style="padding-top: 5px;padding-bottom: 5px;">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -260,7 +264,7 @@
                     <div class="col-lg-4 offset-lg-4">
             <div class="col form-group required">
                       <label class="col-form-label col-form-label-sm" for="inputSmall">Invoice Date</label>
-                      <input class="form-control form-control-sm" type="date" name="Date" value="{{ old('Date') }}<?php echo date("Y-m-d"); ?>" placeholder="" required>
+                      <input class="form-control form-control-sm" type="date" id="Date" name="Date" value="{{ old('Date') }}<?php if( request()->route('inv') == null)echo date("Y-m-d"); ?>" placeholder="" required>
                 </div>
             </div>
 
@@ -270,11 +274,20 @@
                 </div>
                 <div class="row">
                 <div class="col">
+      @if(request()->route('inv'))
+                @if($invoice->Status_Inv == 'PAID')
                     <button type="button" class="btn btn-success btn-sm">PAID</button>
-                    
-                    <button type="button" class="btn btn-secondary btn-sm">Invoice No:</button>
+                @endif
+                @if($invoice->Status_Inv == 'PENDING')
+                    <button type="button" class="btn btn-warning btn-sm">PENDING</button>
+                    @endif
+       
+                  
+                  
+                    <button type="button" class="btn btn-info btn-sm">Invoice No: {{$invoice->Inv_No ?? ''}}</button>
                    
-                    <button type="button" class="btn btn-secondary btn-sm">Aging:</button>
+                    <button type="button" class="btn btn-secondary btn-sm">Aging: {{$invoice->Aging ?? ''}}</button>
+                    @endif
                     </div>
                     </div>
                    
@@ -307,7 +320,7 @@
         <div class="row">
               <div class="col-lg-12 ">
               
-<div id="cart">
+<div >
    <table class="table">
         <thead>
             <tr>
@@ -329,7 +342,7 @@
         <tr class="line_items">      
             <td style="padding-bottom: 0px;padding-top: 0px;">{{$i}}</td>
             <td style="padding-bottom: 0px;padding-top: 0px;"><select style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" id="Product_{{$i}}" name="Product_{{$i}}" class="form-control form-control-sm">
-                                <option  value=''>Product</option>
+                                <option  value=''></option>
                                 @foreach($product as $key => $value)
                                             <option value="{{$value->id}}" >{{$value->Product_Name}}</option>
                                 @endforeach	
@@ -339,7 +352,7 @@
             <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" id="Qty_{{$i}}" name="Qty_{{$i}}" value="" placeholder="" ></td>
             <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" id="Disc_{{$i}}" name="Disc_{{$i}}" value="" placeholder="" ></td>
             <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" id="DiscRM_{{$i}}" name="DiscRM_{{$i}}" value="" placeholder="" ></td>
-            <td style="padding-bottom: 0px;padding-top: 0px;"><input jAutoCalc="{Qty_{{$i}}} * {U_price_{{$i}}}" style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" id="Total_{{$i}}" name="Total_{{$i}}" value="" placeholder="" ></td>
+            <td style="padding-bottom: 0px;padding-top: 0px;"><input style="border: 0;border: 0;padding-bottom: 0px;padding-top: 0px;" class="form-control form-control-sm" type="text" id="Total_{{$i}}" name="Total_{{$i}}" value="" placeholder="" ></td>
             <td style="padding-bottom: 0px;padding-top: 0px;"><button type="button" onclick="remove_inv({{$i}});"><span style="font-size: 1em; color: Tomato;"><i class="fas fa-times"></span></button></td>
             </tr>
         @endfor
@@ -347,7 +360,7 @@
         <tfoot>
         <th colspan=5></th>
         <th >Grand Total</th>
-        <th ><input jAutoCalc="({Total_1} + {Total_2} +{Total_3} +{Total_4} +{Total_5})" style="border: 0;" class="form-control form-control-sm" type="text" name="Grand_Total" value="" placeholder="" ></th>
+        <th ><input  style="border: 0;" class="form-control form-control-sm" type="text" id="Grand_Total" name="Grand_Total" value="" placeholder="" ></th>
         <th ></th>
         </tfoot>
   </table>
@@ -382,7 +395,7 @@
                   <div class="row">
                         <div class="col-lg-5 ">
                         <label class="col-form-label col-form-label-sm" for="inputSmall">Sales Person</label>
-                          <select name="Sales_Person" class="form-control form-control-sm" required>
+                          <select id="Sales_Person" name="Sales_Person" class="form-control form-control-sm" required>
                             <option  value=''>Please select consultant</option>
                             @foreach($consultant as $key => $value)
                               <option value="{{$value->id}}" @if($value->Status != 'Active')style="color:red;" @endif >{{$value->Name}} - {{$value->Employee_Code}}</option>
@@ -393,7 +406,7 @@
 
                         <div class="col-lg-3">
                           <label class="col-form-label col-form-label-sm" for="inputSmall">Sales Channel</label>
-                          <select name="Channel" class="form-control form-control-sm" required>
+                          <select id="Channel" name="Channel" class="form-control form-control-sm" required>
                           <option  value=''>Please select</option>
                           <option  value='1'>ONLINE</option>
                           <option  value='2'>DISTRIBUTOR</option>
@@ -403,7 +416,7 @@
                           </select>
                           </div><div class="col-lg-3">  
                           <label class="col-form-label col-form-label-sm" for="inputSmall">Closing Source</label>
-                          <select name="Closing" class="form-control form-control-sm">
+                          <select id="Closing" name="Closing" class="form-control form-control-sm">
                             <option  value=''>Please select</option>
                             <option  value='A'>A - CALL</option>
                             <option  value='B'>B - WHATSAPP</option>
@@ -467,10 +480,10 @@
    <h5 id="indicators">Account </h5>
    <div class="col form-group required">
       <label class="col-form-label col-form-label-sm" for="inputSmall">Full Settlement Date</label>
-      <input class="form-control form-control-sm" type="Date" name="Date_Settlement" value="{{ old('Date_Settlement') }}" placeholder="" >
+      <input class="form-control form-control-sm" type="Date" id="Date_Settlement" name="Date_Settlement" value="{{ old('Date_Settlement') }}" placeholder="" >
    </div>
    <label class="col-form-label col-form-label-sm" for="inputSmall">Collector</label>
-   <select name="Collector" class="form-control form-control-sm">
+   <select id="Collector" name="Collector" class="form-control form-control-sm">
       <option  value=''>Please select collector</option>
       @foreach($cmd as $key => $value)
       <option value="{{$value->id}}" @if($value->Status != 'Active')style="color:red;" @endif >{{$value->Name}} - {{$value->Employee_Code}}</option>
@@ -501,10 +514,20 @@
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 bg-white border-b border-gray-200">
 
+        @if(request()->route('id') || request()->route('inv'))
+          <div class="row">
+          <div class="col-lg-5">
+          <p style="color: grey;font-style: italic;margin-bottom:1;">Created By: {{$invoice->Created_By ?? '-'}} on {{$invoice->Created_Date ?? '-'}}</p>
+          </div>
+          <div class="col-lg-5 offset-lg-1">
+          <p style="color: grey;font-style: italic;margin-bottom:1;padding-left:20px;">Last Edited By: {{$invoice->Last_Edited_By ?? '-'}} on {{$invoice->Last_Edited_Date ?? '-'}}</p>
+          </div>
+          </div>
+          @endif
 
         
 
-        @if(request()->route('id'))
+        @if(request()->route('id')  || request()->route('inv'))
                 <button type="submit" class="btn btn-primary">Save Invoice</button>
                 <button type="reset" class="btn btn-warning" onclick="window.location.reload();">
                 Clear Form
@@ -512,38 +535,7 @@
             </form>
         @endif
 
-        
 
-  Id
-Name
-MyKad_SSM
-Phone_1
-Phone_2
-Phone_3
-Occupation
-Order_Status
-Address
-Address_2
-Poscode
-City
-State
-Country
-Date
-PAID  Invoice No:  Aging
-
-Product_{{$i}}
-U_price_{{$i}} Qty_{{$i}} Disc_{{$i}} DiscRM_{{$i}} Total_{{$i}}
-Grand_Total
-
-Sales_Person
-Channel
-Closing
-
-Ptp_{{$p}}
-Settlement_{{$p}}
-
-Date_Settlement
-Collector
 
 </div>
       </div>
@@ -557,8 +549,85 @@ Collector
 </x-app-layout>
 <script>
 $( document ).ready(function() {
+
   $('#State').val( {{$client->State ?? ''}} );
-  $('#Country').val( {{$client->Country ?? ''}} );
+  $('#Country').val( "{{$client->Country ?? ''}}" );
+
+  @if(request()->route('inv'))
+  $('#Order_Status').val("{{$invoice->Orderstatus ?? ''}}" );
+  $('#Occupation').val( "{{$invoice->occupation_code ?? ''}}" );
+
+  $('#Product_1').val( {{$invoice->Product ?? ''}} );
+  $('#Product_2').val( {{ $invoice->Product_2 ?? ''}} );
+  $('#Product_3').val( {{$invoice->Product_3 ?? ''}} );
+  $('#Product_4').val( {{$invoice->Product_4 ?? ''}} );
+  $('#Product_5').val( {{$invoice->Product_5 ?? ''}} );
+  $('#Product_6').val( {{$invoice->Product_6 ?? ''}} );
+  $('#Product_7').val( {{$invoice->Product_7 ?? ''}} );
+  $('#Product_8').val( {{$invoice->Product_8 ?? ''}} );
+
+  $('#U_price_1').val( {{ returnNull($invoice->Price) ?? ''}} );
+  $('#U_price_2').val( {{ returnNull($invoice->Price_2) ?? ''}} );
+  $('#U_price_3').val( {{ returnNull($invoice->Price_3) ?? ''}} );
+  $('#U_price_4').val( {{ returnNull($invoice->Price_4) ?? ''}} );
+  $('#U_price_5').val( {{ returnNull($invoice->Price_5) ?? ''}} );
+  $('#U_price_6').val( {{ returnNull($invoice->Price_6) ?? ''}} );
+  $('#U_price_7').val( {{ returnNull($invoice->Price_7) ?? ''}} );
+  $('#U_price_8').val( {{ returnNull($invoice->Price_8) ?? ''}} );
+
+  $('#Qty_1').val( {{ returnNull($invoice->Qty) ?? ''}} );
+  $('#Qty_2').val( {{ returnNull($invoice->Qty_2) ?? ''}} );
+  $('#Qty_3').val( {{ returnNull($invoice->Qty_3) ?? ''}} );
+  $('#Qty_4').val( {{ returnNull($invoice->Qty_4) ?? ''}} );
+  $('#Qty_5').val( {{ returnNull($invoice->Qty_5) ?? ''}} );
+  $('#Qty_6').val( {{ returnNull($invoice->Qty_6) ?? ''}} );
+  $('#Qty_7').val( {{ returnNull($invoice->Qty_7) ?? ''}} );
+  $('#Qty_8').val( {{ returnNull($invoice->Qty_8) ?? ''}} );
+
+  $('#Disc_1').val( {{ returnNull($invoice->Discount) ?? ''}} );
+  $('#Disc_3').val( {{ returnNull($invoice->Discount_3) ?? ''}} );
+  $('#Disc_4').val( {{ returnNull($invoice->Discount_4) ?? ''}} );
+  $('#Disc_5').val( {{ returnNull($invoice->Discount_5) ?? ''}} );
+  $('#Disc_6').val( {{ returnNull($invoice->Discount_6) ?? ''}} );
+  $('#Disc_7').val( {{ returnNull($invoice->Discount_7) ?? ''}} );
+  $('#Disc_8').val( {{ returnNull($invoice->Discount_8) ?? ''}} );
+  
+  $('#Total_1').val( {{ returnNull($invoice->Total_RM) ?? ''}} );
+  $('#Total_2').val( {{ returnNull($invoice->Total_RM_2) ?? ''}} );
+  $('#Total_3').val( {{ returnNull($invoice->Total_RM_3) ?? ''}} );
+  $('#Total_4').val( {{ returnNull($invoice->Total_RM_4) ?? ''}} );
+  $('#Total_5').val( {{ returnNull($invoice->Total_RM_5) ?? ''}} );
+  $('#Total_6').val( {{ returnNull($invoice->Total_RM_6 )?? ''}} );
+  $('#Total_7').val( {{ returnNull($invoice->Total_RM_7) ?? ''}} );
+  $('#Total_8').val( {{ returnNull($invoice->Total_RM_8) ?? ''}} );
+
+  $('#Grand_Total').val( {{$invoice->Grand_Total ?? ''}} );
+
+  $('#Date').val( "{{$invoice->Date ?? ''}}" );
+
+  $('#Sales_Person').val( {{$invoice->Consultant ?? ''}} );
+  $('#Channel').val( {{$invoice->Channel ?? ''}} );
+  $('#Closing').val( "{{$invoice->closing_code ?? ''}}" );
+
+  $('#Ptp_1').val( "{{$invoice->Promise_pay ?? ''}}" );
+  $('#Ptp_2').val( "{{$invoice->Promise_pay2 ?? ''}}" );
+  $('#Ptp_3').val( "{{$invoice->Promise_pay3 ?? ''}}" );
+  $('#Ptp_4').val( "{{$invoice->Promise_pay4 ?? ''}}" );
+
+  $('#Settlement_1').val( {{$invoice->Payment1 ?? ''}} );
+  $('#Settlement_2').val( {{$invoice->Payment2 ?? ''}} );
+  $('#Settlement_3').val( {{$invoice->Payment3 ?? ''}} );
+  $('#Settlement_4').val( {{$invoice->Payment4 ?? ''}} );
+  $('#total_settlement').val( {{$invoice->Payment1 ?? '0'}} + {{$invoice->Payment2 ?? '0'}} + {{$invoice->Payment3 ?? '0'}} + {{$invoice->Payment4 ?? '0'}} );
+
+
+  $('#Date_Settlement').val( "{{$invoice->Paid_Date ?? ''}}" );
+  $('#Collector').val( {{$invoice->Cmd ?? ''}} );
+ 
+
+  @endif
+
+  
   
 });
 
