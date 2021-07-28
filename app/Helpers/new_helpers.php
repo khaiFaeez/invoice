@@ -1,6 +1,8 @@
 <?php
 
 
+
+
 // to get number of days from current date
  function getAging($date1)
     {
@@ -51,7 +53,7 @@ function returnTemplate()
   
     for($b =0;$b < sizeof($Product_Id[$i]);$b++)
     {  
-        $product2 = DB::table('product')->select('Product_Name')->where('id',$Product_Id[$i][$b])->first();
+        $product2 = DB::table( 'product' )->select('Product_Name')->where('id',$Product_Id[$i][$b])->first();
 
         $text .=  '`'.$product2->Product_Name.'`,'.$U_Price[$i][$b].','.$Qty[$i][$b].','.$Disc[$i][$b].','.$Total[$i][$b].',';
     }
@@ -61,6 +63,22 @@ function returnTemplate()
     }
     return $button;
 
+}
+
+function getNegeri()
+{
+    $negeri = DB::table('negeri')->get();
+    return $negeri;
+}
+function getProduct()
+{
+    $product = DB::table('product')->get();
+    return $product;
+}
+function getConsultant()
+{
+    $product = DB::table('product')->get();
+    return $product;
 }
 
 
