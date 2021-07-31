@@ -108,6 +108,9 @@ td { font-size: 12px; }
 $(function() {
 
 var table = $('#data-table').DataTable({
+    "language": {
+                        processing: '<i class="fas fa-spinner fa-pulse fa-4x fa-fw" style="color:#f5a50f"></i></br>Loading, Please Wait!'},
+    
     processing: true,
     serverSide: true,
     scrollX: true,
@@ -147,9 +150,9 @@ var table = $('#data-table').DataTable({
             data: 'Date',name: 'invoice.Date',"searchable": false
         },
         {
-            data: 'MyKad_SSM',name: 'client.MyKad_SSM',"searchable": false
+            data: 'MyKad_SSM',name: 'cl.MyKad_SSM',"searchable": false
         },{
-            data: 'Name',name: 'client.Name'
+            data: 'Name',name: 'cl.Name'
         },{
             data: 'Ship_Phone',name: 'invoice.Ship_Phone',"searchable": false
         },{
@@ -278,7 +281,17 @@ var table = $('#data-table').DataTable({
             orderable: false,
             searchable: false
         },
-    ]
+    ],
+    initComplete: function () {
+            this.api().columns().every(function () {
+                var column = this;
+                var input = document.createElement("input");
+                $(input).appendTo($(column.footer()).empty())
+                .on('change', function () {
+                    column.search($(this).val(), false, false, true).draw();
+                });
+            });
+        }
 });
 
 

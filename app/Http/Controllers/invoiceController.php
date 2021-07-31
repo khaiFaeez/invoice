@@ -11,10 +11,19 @@ Use Exception;
 use DataTables;
 use App\Models\Invoice;
 
-
+ 
 
 class invoiceController extends Controller
 {
+    
+    private $table_client;
+    private $table_invoice;
+    private $table_consultant;
+    private $table_cmd;
+    private $table_products;
+    private $table_template_products;
+
+   
     /**
      * Handle the incoming request.
      *
@@ -24,22 +33,67 @@ class invoiceController extends Controller
     public function __invoke(Request $request)
     {
         //
+        
+    }
+    public function __construct()
+    { 
+        $this->table_client = 'client';
+        $this->table_invoice = 'invoice';
+        $this->table_consultant = 'consultant';
+        $this->table_cmd = 'cmd';
+        $this->table_products = 'product';
+        $this->table_template_products = 'template_products';
     }
     //for copy address function
     public function getAddress(Request $request)
     {
-        $client = DB::table('client')->where('id',$request->id)->first();
+        
+
+        $client = DB::table($this->table_client)->where('id',$request->id)->first();
         return response()->json($client);
 
+    }
+    public function invoicelist2(Request $request)
+    {
+        if ($request->ajax())
+         {
+            //$data = Invoice::select('Aging','Id','Inv_No','Status_Inv');
+
+            //$subQuery = DB::query()->from('product')->select('product.Code')->where('product.id','1');
+
+            $data = Invoice::join( $this->table_client.' as cl', $this->table_invoice.'.Name', '=', 'cl.id')
+            ->leftjoin($this->table_products.' AS p1', 'p1.id', '=',$this->table_invoice.'.product')
+            ->join($this->table_consultant.' AS c', 'c.id', '=',$this->table_invoice.'.Consultant')
+            ->select([$this->table_invoice.'.*', 'cl.Name','cl.MyKad_SSM','c.Name as Cname', 'p1.Product_Name AS P1' ]);
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+                     
+     
+                           $btn = "<a href='list/".$row->Id."' class='edit btn btn-primary btn-sm'>View</a>";
+    
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+
+ 
+    //return view('invoice_list');
+        
+        
     }
     public function invoicelist(Request $request)
     {
         if ($request->ajax()) {
             //$data = Invoice::select('*');
 
-            $data = Invoice::join('client', 'invoice.Name', '=', 'client.id')->join('product AS p1', 'p1.id', '=','invoice.product')
-            ->join('product AS p2', 'p2.id', '=','invoice.product_2')->join('consultant AS c', 'c.id', '=','invoice.Consultant')
-            ->select(['invoice.*', 'client.Name','client.MyKad_SSM', 'p1.Product_Name AS P1', 'p2.Product_Name AS P2','c.Name as Cname' ]);
+            $data = Invoice::leftjoin( $this->table_client.' as cl', $this->table_invoice.'.Name', '=', 'cl.id')
+            ->leftjoin($this->table_products.' AS p1', 'p1.id', '=',$this->table_invoice.'.product')
+            ->leftjoin($this->table_products.' AS p2', 'p2.id', '=',$this->table_invoice.'.product_2')
+            ->leftjoin($this->table_products.' AS p3', 'p3.id', '=',$this->table_invoice.'.product_3')
+            ->leftjoin($this->table_consultant.' AS c', 'c.id', '=',$this->table_invoice.'.Consultant')
+            ->select([$this->table_invoice.'.*', 'cl.Name','cl.MyKad_SSM', 'p1.Product_Name AS P1', 'p2.Product_Name AS P2','c.Name as Cname' ]);
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
@@ -63,14 +117,20 @@ class invoiceController extends Controller
         
         return view('invoice_list');
     }
+    public function invoice_list2(Request $request)
+    {
+       
+        
+        return view('invoice_list2');
+    }
     // initial form to create client
     public function add_client_form()
     {
         $id='';$button = '';
-        $state = DB::table('negeri')->get();
-        $product = DB::table('product')->get();
-        $consultant = DB::table('consultant')->get();
-        $cmd = DB::table('cmd')->get();
+        $state = getNegeri();
+        $product = getProduct();
+        $consultant = DB::table( $this->table_consultant )->get();
+        $cmd = DB::table( $this->table_cmd )->get();
         $country = getCountry();
         $button = returnTemplate();
         
@@ -88,15 +148,15 @@ class invoiceController extends Controller
     // to view invoice & edit invoice
     public function invoice_view_form($id_invoice)
     {
-        $invoice = DB::table('invoice')->where('id',$id_invoice)->select('*')->first();
+        $invoice = DB::table( $this->table_invoice )->where('id',$id_invoice)->select('*')->first();
 
         $id='';$button = '';
-        $state = DB::table('negeri')->get();
-        $product = DB::table('product')->get();
-        $consultant = DB::table('consultant')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
-        $cmd = DB::table('cmd')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
+        $state = getNegeri();
+        $product = getProduct();
+        $consultant = DB::table( $this->table_consultant )->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
+        $cmd = DB::table( $this->table_cmd )->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
         $country = getCountry(); 
-        $client = DB::table('client')->where('id',$invoice->Name)->first();
+        $client = DB::table($this->table_client)->where('id',$invoice->Name)->first();
         
         $button = returnTemplate();
 
@@ -117,13 +177,13 @@ class invoiceController extends Controller
     public function add_invoice_form($id_client)
     {
         $id='';$button = '';
-        $state = DB::table('negeri')->get();
-        $product = DB::table('product')->get();
-        $consultant = DB::table('consultant')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
-        $cmd = DB::table('cmd')->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
+        $state = getNegeri();
+        $product = getProduct();
+        $consultant = DB::table( $this->table_consultant )->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
+        $cmd = DB::table( $this->table_cmd )->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
         $country = getCountry(); 
-        $client = DB::table('client')->where('id',$id_client)->first();
-        $product_template = DB::table('template_products')->get();
+        $client = DB::table( $this->table_client )->where('id',$id_client)->first();
+        $product_template = DB::table( $this->table_template_products )->get();
 
 
         for($i =0;$i < sizeof($product_template);$i++)
@@ -140,7 +200,7 @@ class invoiceController extends Controller
       
         for($b =0;$b < sizeof($Product_Id[$i]);$b++)
         {  
-            $product2 = DB::table('product')->select('Product_Name')->where('id',$Product_Id[$i][$b])->first();
+            $product2 = DB::table( $this->table_products )->select('Product_Name')->where('id',$Product_Id[$i][$b])->first();
 
             $text .=  '`'.$product2->Product_Name.'`,'.$U_Price[$i][$b].','.$Qty[$i][$b].','.$Disc[$i][$b].','.$Total[$i][$b].',';
         }
@@ -169,7 +229,7 @@ class invoiceController extends Controller
         
         try
         {
-            $id = DB::table('client')->insertGetId(
+            $id = DB::table($this->table_client)->insertGetId(
                 [   
                     'Member_Since' => date('Y-m-d H:i:s'), 
                     'Name' => $request->Name, 'MyKad_SSM' => $request->MyKad_SSM,
@@ -199,7 +259,7 @@ class invoiceController extends Controller
       
         try
         {
-            $id = DB::table('invoice')->insertGetId(
+            $id = DB::table( $this->table_invoice )->insertGetId(
 
                 [
             //invoice detail
@@ -246,7 +306,7 @@ class invoiceController extends Controller
             );
             // update invoice number
             $Inv_No = setInvNo($id);
-            DB::table('invoice')->where('Id',$id)->update(array('Inv_No'=>$Inv_No));
+            DB::table( $this->table_invoice )->where('Id',$id)->update(array('Inv_No'=>$Inv_No));
 
             
 
