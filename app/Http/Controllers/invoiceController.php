@@ -36,7 +36,7 @@ class invoiceController extends Controller
         
     }
     public function __construct()
-    {
+    { 
         $this->table_client = 'client';
         $this->table_invoice = 'invoice';
         $this->table_consultant = 'consultant';
@@ -53,14 +53,47 @@ class invoiceController extends Controller
         return response()->json($client);
 
     }
+    public function invoicelist2(Request $request)
+    {
+        if ($request->ajax())
+         {
+            //$data = Invoice::select('Aging','Id','Inv_No','Status_Inv');
+
+            //$subQuery = DB::query()->from('product')->select('product.Code')->where('product.id','1');
+
+            $data = Invoice::join( $this->table_client.' as cl', $this->table_invoice.'.Name', '=', 'cl.id')
+            ->leftjoin($this->table_products.' AS p1', 'p1.id', '=',$this->table_invoice.'.product')
+            ->join($this->table_consultant.' AS c', 'c.id', '=',$this->table_invoice.'.Consultant')
+            ->select([$this->table_invoice.'.*', 'cl.Name','cl.MyKad_SSM','c.Name as Cname', 'p1.Product_Name AS P1' ]);
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+                     
+     
+                           $btn = "<a href='list/".$row->Id."' class='edit btn btn-primary btn-sm'>View</a>";
+    
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+
+ 
+    //return view('invoice_list');
+        
+        
+    }
     public function invoicelist(Request $request)
     {
         if ($request->ajax()) {
             //$data = Invoice::select('*');
 
-            $data = Invoice::join('client', 'invoice.Name', '=', 'client.id')->join('product AS p1', 'p1.id', '=','invoice.product')
-            ->join('product AS p2', 'p2.id', '=','invoice.product_2')->join('consultant AS c', 'c.id', '=','invoice.Consultant')
-            ->select(['invoice.*', 'client.Name','client.MyKad_SSM', 'p1.Product_Name AS P1', 'p2.Product_Name AS P2','c.Name as Cname' ]);
+            $data = Invoice::leftjoin( $this->table_client.' as cl', $this->table_invoice.'.Name', '=', 'cl.id')
+            ->leftjoin($this->table_products.' AS p1', 'p1.id', '=',$this->table_invoice.'.product')
+            ->leftjoin($this->table_products.' AS p2', 'p2.id', '=',$this->table_invoice.'.product_2')
+            ->leftjoin($this->table_products.' AS p3', 'p3.id', '=',$this->table_invoice.'.product_3')
+            ->leftjoin($this->table_consultant.' AS c', 'c.id', '=',$this->table_invoice.'.Consultant')
+            ->select([$this->table_invoice.'.*', 'cl.Name','cl.MyKad_SSM', 'p1.Product_Name AS P1', 'p2.Product_Name AS P2','c.Name as Cname' ]);
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
@@ -83,6 +116,12 @@ class invoiceController extends Controller
        
         
         return view('invoice_list');
+    }
+    public function invoice_list2(Request $request)
+    {
+       
+        
+        return view('invoice_list2');
     }
     // initial form to create client
     public function add_client_form()
@@ -117,7 +156,7 @@ class invoiceController extends Controller
         $consultant = DB::table( $this->table_consultant )->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
         $cmd = DB::table( $this->table_cmd )->orderBy('Status', 'ASC')->orderBy('Name', 'ASC')->get();
         $country = getCountry(); 
-        $client = DB::table($thie->table_client)->where('id',$invoice->Name)->first();
+        $client = DB::table($this->table_client)->where('id',$invoice->Name)->first();
         
         $button = returnTemplate();
 

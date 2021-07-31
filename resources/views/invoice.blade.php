@@ -117,7 +117,7 @@
 
                 <div class="row">
                 <div class="col">
-                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Occpation {{$invoice->occupation_code ?? ''}}</label>
+                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Occpation</label>
                           <select id="Occupation" name="Occupation" class="form-control form-control-sm" >
                           <option  value=''>Please select</option>
                           <option  value='A'>Gaji Bulanan</option>
@@ -128,7 +128,7 @@
                 </select>
                 </div>
                 <div class="col">
-                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Order Status {{$invoice->Orderstatus ?? ''}}</label>
+                <label class="col-form-label col-form-label-sm" for="inputSmall">Client Order Status</label>
                           <select id="Order_Status" name="Order_Status" class="form-control form-control-sm" >
                           <option  value=''>Please select</option>
                           <option  value='NEW'>New Order</option>
