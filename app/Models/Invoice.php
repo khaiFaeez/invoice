@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-    public $table = 'Invoice';
+    
+    protected $table = 'invoice';
+
+
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
 }

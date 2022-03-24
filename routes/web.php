@@ -28,6 +28,10 @@ require __DIR__.'/auth.php';
 //     return view('invoice');
 // })->middleware(['auth'])->name('invoice');
 
+Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
+    Route::get('/',[App\Http\Controllers\ClientController::class, 'index'])->name('index');
+});
+
 Route::get('/invoice', 'App\Http\Controllers\invoiceController@add_client_form')->middleware(['auth'])->name('invoice');
 Route::get('/getShipAddress', 'App\Http\Controllers\invoiceController@getAddress')->middleware(['auth'])->name('getAddress');
 
